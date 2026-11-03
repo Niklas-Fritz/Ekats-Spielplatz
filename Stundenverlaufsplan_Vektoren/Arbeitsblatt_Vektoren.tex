@@ -4,10 +4,11 @@
 %  Lösungen ein-/ausblenden: \loesungentrue / \loesungenfalse
 %
 %  Didaktischer Aufbau:
-%    Definition 1  Pfeilklasse     -> Aufgabe 1 (gleiche Vektoren markieren)
-%    Definition 2  Verschiebung    -> Aufgabe 2 (Figur verschieben)
+%    Definition    Pfeilklasse     -> Aufgabe 1 (gleiche Vektoren markieren)
+%    Merke: Vektor als Verschiebung (Deutung, keine 2. Definition)
+%                                  -> Aufgabe 2 (Figur verschieben)
 %    Weitere Aufgaben              -> Aufgabe 3 (zwei Verschiebungen nacheinander)
-%    Merke: Verbindungsvektor/Länge-> Aufgabe 4 (Verbindungsvektor, Länge)
+%    Merke: Länge eines Vektors    -> Aufgabe 4 (Längen berechnen)
 %                                  -> Aufgabe 5 (Parallelogramm, Transfer)
 % ============================================================
 \documentclass[11pt,a4paper]{article}
@@ -70,7 +71,7 @@
 
 % --- Kästen --------------------------------------------------
 \newtcolorbox{definition}[1]{colback=orange!6,colframe=orange!70!black,
-  title={Definition #1},fonttitle=\bfseries}
+  title={#1},fonttitle=\bfseries}
 \newtcolorbox{merke}[1][Merke]{colback=blue!5,colframe=blue!60!black,
   title=#1,fonttitle=\bfseries}
 
@@ -118,7 +119,7 @@
 % ============================================================
 %  1. Pfeilklasse
 % ============================================================
-\begin{definition}{1: Ein Vektor ist eine Pfeilklasse}
+\begin{definition}{Definition: Vektor}
   \begin{minipage}[c]{0.56\linewidth}
     Alle Pfeile, die
     \begin{itemize}[nosep,leftmargin=1.2em]
@@ -190,78 +191,93 @@
 \end{aufgabe}
 
 % ============================================================
-%  2. Verschiebung
+%  Deutung: Vektor als Verschiebung
 % ============================================================
-\Needspace{7cm}
-\begin{definition}{2: Ein Vektor ist eine Verschiebung}
+\Needspace{6cm}
+\begin{merke}[Merke: Vektor als Verschiebung]
   \begin{minipage}[c]{0.56\linewidth}
-    Ein Vektor beschreibt eine \textbf{Änderung der Lage}.
-    Der Vektor $\vect{v}$ gibt an, wie weit und in welche Richtung
-    \emph{jeder} Punkt einer Figur verschoben wird.
+    Einen Vektor kann man auch als \textbf{Verschiebung} deuten:
+    Er gibt an, wie weit und in welche Richtung ein Punkt verschoben wird.
 
     \smallskip
-    Die Pfeile von jedem Punkt zu seinem Bildpunkt
-    ($A \to A'$, $B \to B'$, $C \to C'$) sind alle gleich -- sie bilden
-    genau die \textbf{Pfeilklasse} aus Definition~1.
-
-    \smallskip
-    Im Bild: $\vect{v} = \spvek{3}{1}$, also wird jeder Punkt
-    3 nach rechts und 1 nach oben verschoben.
+    \textbf{Beispiel:} \quad $\vect{v} = \spvek{3}{1}$
+    \quad (3 nach rechts, 1 nach oben)
+    \[
+      P(1 \mid 1) \;\xrightarrow{\ \vect{v}\ }\; P'(4 \mid 2)
+    \]
   \end{minipage}\hfill
   \begin{minipage}[c]{0.4\linewidth}
     \centering
-    \begin{tikzpicture}[scale=0.55]
-      \draw[very thin,gray!40] (0,0) grid (7,5);
-      \draw[thick,fill=gray!20] (0.5,0.5) node[below left]{$A$}
-        -- (2.5,0.5) node[below right]{$B$}
-        -- (1.5,2.5) node[above]{$C$} -- cycle;
-      \draw[thick,fill=orange!25] (3.5,1.5) node[above left,inner sep=1pt]{$A'$}
-        -- (5.5,1.5) node[below right]{$B'$}
-        -- (4.5,3.5) node[above]{$C'$} -- cycle;
-      \foreach \p in {(0.5,0.5),(2.5,0.5)}
-        \draw[-Stealth,thick,blue,dashed] \p -- ++(3,1);
-      \draw[-Stealth,thick,blue,dashed] (1.5,2.5) -- ++(3,1)
+    \begin{tikzpicture}[scale=0.7]
+      \draw[very thin,gray!40] (0,0) grid (5,3);
+      % Treppe: 3 nach rechts, 1 nach oben
+      \draw[-Stealth,gray,dashed] (1,1) -- (4,1)
+        node[midway,below,font=\scriptsize] {3 nach rechts};
+      \draw[-Stealth,gray,dashed] (4,1) -- (4,2)
+        node[midway,right,font=\scriptsize] {1 nach oben};
+      % Verschiebungspfeil
+      \draw[-Stealth,very thick,blue] (1,1) -- (4,2)
         node[midway,above left,inner sep=1pt] {$\vect{v}$};
+      \fill (1,1) circle (2.5pt) node[below left] {$P$};
+      \fill[orange!80!black] (4,2) circle (2.5pt) node[above] {$P'$};
     \end{tikzpicture}
   \end{minipage}
-\end{definition}
+\end{merke}
 
-\begin{aufgabe}[Figuren verschieben]{10cm}
+\begin{aufgabe}[Punkte verschieben]{10cm}
   \begin{enumerate}[label=\alph*),nosep]
-    \item Verschiebe das Dreieck $PQR$ um den Vektor
-          $\vect{v} = \spvek{5}{1}$. Zeichne das Bilddreieck $P'Q'R'$ und
-          gib die Koordinaten von $P'$, $Q'$ und $R'$ an.
-    \item Zeichne die Verschiebungspfeile $P \to P'$, $Q \to Q'$ und
-          $R \to R'$ ein. Was fällt dir auf?
-    \item Ein Punkt $S(2 \mid 5)$ wird durch eine Verschiebung auf
-          $S'(7 \mid 3)$ abgebildet. Gib den Verschiebungsvektor an.
-          Auf welchen Punkt wird $T(0 \mid 4)$ bei derselben Verschiebung
-          abgebildet?
+    \item Verschiebe den Punkt $P(1 \mid 2)$ um $\vect{v} = \spvek{4}{1}$.
+          Zeichne den Verschiebungspfeil und gib den Bildpunkt $P'$ an.
+    \item Verschiebe auch $Q(3 \mid 5)$ um denselben Vektor $\vect{v}$.
+          Vergleiche die beiden Pfeile. Was fällt dir auf?
   \end{enumerate}
 
   \begin{center}
   \begin{tikzpicture}[scale=0.65]
     \koordsys{10}{6}
-    \draw[thick,fill=gray!20] (1,1) node[below left]{$P$}
-      -- (4,2) node[above right,inner sep=1pt]{$Q$}
-      -- (2,4) node[above left]{$R$} -- cycle;
+    \fill (1,2) circle (2.5pt) node[below left] {$P$};
+    \fill (3,5) circle (2.5pt) node[below left] {$Q$};
     \ifloesungen
-      \draw[thick,fill=orange!25] (6,2) node[below right]{$P'$}
-        -- (9,3) node[below right]{$Q'$}
-        -- (7,5) node[above]{$R'$} -- cycle;
-      \foreach \p in {(1,1),(4,2),(2,4)}
-        \draw[-Stealth,thick,blue,dashed] \p -- ++(5,1);
+      \draw[-Stealth,very thick,blue] (1,2) -- (5,3);
+      \draw[-Stealth,very thick,blue] (3,5) -- (7,6);
+      \fill[orange!80!black] (5,3) circle (2.5pt) node[below right] {$P'$};
+      \fill[orange!80!black] (7,6) circle (2.5pt) node[right] {$Q'$};
     \fi
   \end{tikzpicture}
   \end{center}
-  \schreibplatz{3cm}
+  \schreibplatz{2cm}
   \loesung{
-    a) $P'(6 \mid 2)$, $Q'(9 \mid 3)$, $R'(7 \mid 5)$\\
-    b) Alle Verschiebungspfeile sind gleich lang, parallel und gleich
-       orientiert -- sie sind Repräsentanten desselben Vektors
-       $\vect{v} = \spvek{5}{1}$.\\
-    c) $\vect{v} = \spvek{7-2}{3-5} = \spvek{5}{-2}$, \quad
-       $T'(0+5 \mid 4-2) = T'(5 \mid 2)$
+    a) $P'(1+4 \mid 2+1) = P'(5 \mid 3)$\\
+    b) $Q'(7 \mid 6)$. Beide Pfeile sind gleich lang, parallel und gleich
+       orientiert -- sie gehören zur selben Pfeilklasse, also zum selben
+       Vektor $\vect{v}$.
+  }
+
+  \Needspace{7cm}
+  \begin{enumerate}[label=\alph*),nosep,start=3]
+    \item Der Punkt $S(2 \mid 5)$ wird auf $S'(7 \mid 3)$ verschoben.
+          Zeichne $S$, $S'$ und den Verschiebungspfeil ein und gib den
+          Verschiebungsvektor an.
+  \end{enumerate}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.65]
+    \koordsys{10}{6}
+    \ifloesungen
+      \draw[-Stealth,gray,dashed] (2,5) -- (7,5)
+        node[midway,above,font=\scriptsize] {5 nach rechts};
+      \draw[-Stealth,gray,dashed] (7,5) -- (7,3)
+        node[midway,right,font=\scriptsize] {2 nach unten};
+      \draw[-Stealth,very thick,blue] (2,5) -- (7,3);
+      \fill (2,5) circle (2.5pt) node[left] {$S$};
+      \fill[orange!80!black] (7,3) circle (2.5pt) node[below] {$S'$};
+    \fi
+  \end{tikzpicture}
+  \end{center}
+  \schreibplatz{2cm}
+  \loesung{
+    c) $\vect{v} = \spvek{7-2}{3-5} = \spvek{5}{-2}$
+       (5 nach rechts, 2 nach unten)
   }
 \end{aufgabe}
 
@@ -299,40 +315,59 @@
   }
 \end{aufgabe}
 
-\Needspace{5cm}
-\begin{merke}[Merke: Verbindungsvektor und Länge]
-  Der Vektor, der den Punkt $A$ auf den Punkt $B$ verschiebt, heißt
-  \textbf{Verbindungsvektor} $\vect{AB}$. Man berechnet ihn mit
-  „Endpunkt minus Anfangspunkt“:
-  \[
-    A(a_1 \mid a_2),\; B(b_1 \mid b_2): \qquad
-    \vect{AB} = \spvek{b_1 - a_1}{b_2 - a_2}
-  \]
-  Die \textbf{Länge} (der Betrag) eines Vektors folgt aus dem Satz des
-  Pythagoras:
-  \[
-    \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2}
-    \qquad\text{bzw.\ im Raum}\qquad
-    \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2 + v_3^2}.
-  \]
+\Needspace{6cm}
+\begin{merke}[Merke: Länge eines Vektors]
+  \begin{minipage}[c]{0.52\linewidth}
+    Die Länge (der \textbf{Betrag}) eines Vektors
+    $\vect{v} = \spvek{v_1}{v_2}$ berechnet man mit dem
+    Satz des Pythagoras:
+    \[
+      \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2}
+    \]
+    \textbf{Beispiel:} $\vect{v} = \spvek{4}{3}$
+    \[
+      \betrag{\vect{v}} = \sqrt{4^2 + 3^2} = \sqrt{25} = 5
+    \]
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.44\linewidth}
+    \centering
+    \begin{tikzpicture}[scale=0.75]
+      \draw[very thin,gray!40] (0,0) grid (5,4);
+      % Katheten
+      \draw[thick,gray] (0.5,0.5) -- (4.5,0.5)
+        node[midway,below,font=\small,black] {$v_1 = 4$};
+      \draw[thick,gray] (4.5,0.5) -- (4.5,3.5)
+        node[midway,right,font=\small,black] {$v_2 = 3$};
+      % rechter Winkel
+      \draw[gray] (4.1,0.5) -- (4.1,0.9) -- (4.5,0.9);
+      % Vektor = Hypotenuse
+      \draw[-Stealth,very thick,blue] (0.5,0.5) -- (4.5,3.5)
+        node[midway,above left,inner sep=1pt]
+        {$\betrag{\vect{v}} = 5$};
+    \end{tikzpicture}
+  \end{minipage}
 \end{merke}
 
-\begin{aufgabe}[Verbindungsvektor und Länge]{6cm}
+\begin{aufgabe}[Länge eines Vektors]{6cm}
   \begin{enumerate}[label=\alph*),nosep]
-    \item Berechne $\vect{AB}$ und $\betrag{\vect{AB}}$ für
-          $A(1 \mid 2)$ und $B(4 \mid 6)$.
-    \item Berechne $\vect{CD}$ und $\betrag{\vect{CD}}$ für
-          $C(1 \mid 2 \mid 0)$ und $D(4 \mid -1 \mid 3)$.
-    \item Wie hängen $\vect{AB}$ und $\vect{BA}$ zusammen? Begründe.
+    \item Berechne die Länge der Vektoren
+          \[
+            \vect{a} = \spvek{3}{4}, \qquad
+            \vect{b} = \spvek{-6}{8}, \qquad
+            \vect{c} = \spvek{2}{-1}, \qquad
+            \vect{d} = \spvek{0}{-2}.
+          \]
+    \item Warum haben $\vect{v}$ und $-\vect{v}$ immer dieselbe Länge?
   \end{enumerate}
   \schreibplatz{4.5cm}
   \loesung{
-    a) $\vect{AB} = \spvek{3}{4}$, \quad
-       $\betrag{\vect{AB}} = \sqrt{9 + 16} = 5$\\
-    b) $\vect{CD} = \spvekd{3}{-3}{3}$, \quad
-       $\betrag{\vect{CD}} = \sqrt{27} = 3\sqrt{3} \approx 5{,}20$\\
-    c) $\vect{BA} = -\vect{AB}$: gleich lang und parallel, aber
-       entgegengesetzt orientiert (Gegenvektor).
+    a) $\betrag{\vect{a}} = \sqrt{9+16} = 5$, \quad
+       $\betrag{\vect{b}} = \sqrt{36+64} = 10$, \quad
+       $\betrag{\vect{c}} = \sqrt{4+1} = \sqrt{5} \approx 2{,}24$, \quad
+       $\betrag{\vect{d}} = \sqrt{0+4} = 2$\\
+    b) Beim Quadrieren fällt das Minuszeichen weg:
+       $(-v_1)^2 = v_1^2$. Anschaulich: Der Gegenvektor zeigt nur in die
+       entgegengesetzte Richtung, der Pfeil ist genauso lang.
   }
 \end{aufgabe}
 
