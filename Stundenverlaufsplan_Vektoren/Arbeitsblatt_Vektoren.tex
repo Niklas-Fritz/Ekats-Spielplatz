@@ -1,0 +1,367 @@
+% ============================================================
+%  Arbeitsblatt: Vektoren
+%  Kompilieren:  latexmk Arbeitsblatt_Vektoren.tex
+%  Lösungen ein-/ausblenden: \loesungentrue / \loesungenfalse
+%
+%  Didaktischer Aufbau:
+%    Definition 1  Pfeilklasse     -> Aufgabe 1 (gleiche Vektoren markieren)
+%    Definition 2  Verschiebung    -> Aufgabe 2 (Figur verschieben)
+%    Weitere Aufgaben              -> Aufgabe 3 (zwei Verschiebungen nacheinander)
+%    Merke: Verbindungsvektor/Länge-> Aufgabe 4 (Verbindungsvektor, Länge)
+%                                  -> Aufgabe 5 (Parallelogramm, Transfer)
+% ============================================================
+\documentclass[11pt,a4paper]{article}
+
+% --- Sprache & Schrift ---------------------------------------
+\usepackage[ngerman]{babel}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% --- Layout --------------------------------------------------
+\usepackage[a4paper,margin=2cm,top=2.5cm]{geometry}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage{needspace}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.5em}
+
+% --- Mathematik ----------------------------------------------
+\usepackage{amsmath,amssymb}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+
+% Vektor-Kurzbefehle
+\newcommand{\vect}[1]{\vec{#1}}
+\newcommand{\spvek}[2]{\begin{pmatrix} #1 \\ #2 \end{pmatrix}}          % 2D
+\newcommand{\spvekd}[3]{\begin{pmatrix} #1 \\ #2 \\ #3 \end{pmatrix}}   % 3D
+\newcommand{\betrag}[1]{\left|#1\right|}
+
+% --- Lösungen ein/aus ----------------------------------------
+\newif\ifloesungen
+\loesungenfalse   % <- auf \loesungentrue setzen für Lösungsblatt
+
+\newcommand{\loesung}[1]{%
+  \ifloesungen
+    \begin{tcolorbox}[colback=green!5,colframe=green!50!black,
+      title=Lösung,fonttitle=\bfseries\small,breakable]#1\end{tcolorbox}
+  \fi}
+
+% Platz zum Schreiben (nur ohne Lösungen)
+\newcommand{\schreibplatz}[1]{\ifloesungen\else\vspace{#1}\fi}
+
+% --- Aufgaben-Umgebung ---------------------------------------
+% Optionales 2. Argument: Platz, der mindestens frei sein muss,
+% sonst beginnt die Aufgabe auf einer neuen Seite.
+\newcounter{aufgabe}
+\newenvironment{aufgabe}[2][]{%
+  \Needspace{#2}%
+  \refstepcounter{aufgabe}%
+  \par\medskip\noindent\textbf{Aufgabe \theaufgabe}%
+  \if\relax\detokenize{#1}\relax\else\ \textit{(#1)}\fi\par\nopagebreak}%
+  {\par}
+
+% --- Kästen --------------------------------------------------
+\newtcolorbox{definition}[1]{colback=orange!6,colframe=orange!70!black,
+  title={Definition #1},fonttitle=\bfseries}
+\newtcolorbox{merke}[1][Merke]{colback=blue!5,colframe=blue!60!black,
+  title=#1,fonttitle=\bfseries}
+
+% --- Kopf- & Fußzeile ----------------------------------------
+\newcommand{\fach}{Mathematik}
+\newcommand{\thema}{Vektoren}
+\newcommand{\klasse}{Klasse \underline{\hspace{1.5cm}}}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\fach{} -- \thema}
+\rhead{Name: \underline{\hspace{4cm}} \quad Datum: \underline{\hspace{2.5cm}}}
+\cfoot{Seite \thepage{} von \pageref{LastPage}}
+\renewcommand{\headrulewidth}{0.4pt}
+
+% --- Zeichenhilfen -------------------------------------------
+% \vekpfeil{Start}{Ende}{Name}{Farbe}{Beschriftungsposition}
+\newcommand{\vekpfeil}[5]{%
+  \draw[-Stealth,very thick,#4] #1 -- #2 node[midway,#5] {$\vect{#3}$};}
+% Koordinatensystem mit Gitter: \koordsys{xmax}{ymax}
+\newcommand{\koordsys}[2]{%
+  \draw[very thin,gray!40] (0,0) grid (#1,#2);
+  \draw[-Stealth] (0,0) -- (#1+0.5,0) node[right] {$x$};
+  \draw[-Stealth] (0,0) -- (0,#2+0.5) node[above] {$y$};
+  \foreach \x in {1,...,#1} \node[below,font=\scriptsize] at (\x,0) {\x};
+  \foreach \y in {1,...,#2} \node[left,font=\scriptsize]  at (0,\y) {\y};}
+
+% ============================================================
+\begin{document}
+
+% Farben für Lösungen (im Arbeitsblatt schwarz)
+\ifloesungen
+  \colorlet{gA}{blue}\colorlet{gB}{red}\colorlet{gC}{green!50!black}
+  \colorlet{gX}{gray}
+\else
+  \colorlet{gA}{black}\colorlet{gB}{black}\colorlet{gC}{black}
+  \colorlet{gX}{black}
+\fi
+
+\begin{center}
+  {\LARGE\bfseries Arbeitsblatt: Vektoren}\\[0.3em]
+  {\large \ifloesungen Lösungen\else \klasse\fi}
+\end{center}
+
+% ============================================================
+%  1. Pfeilklasse
+% ============================================================
+\begin{definition}{1: Ein Vektor ist eine Pfeilklasse}
+  \begin{minipage}[c]{0.56\linewidth}
+    Alle Pfeile, die
+    \begin{itemize}[nosep,leftmargin=1.2em]
+      \item gleich lang,
+      \item parallel und
+      \item gleich orientiert (zeigen in dieselbe Richtung)
+    \end{itemize}
+    sind, fassen wir zu einer \textbf{Klasse} zusammen. Diese Pfeilklasse
+    heißt \textbf{Vektor} $\vect{v}$. Jeder einzelne Pfeil ist ein
+    \textbf{Repräsentant} von $\vect{v}$.
+
+    \smallskip
+    \textbf{Schreibweise:} $\vect{v} = \spvek{2}{1}$ bedeutet:
+    2 Einheiten nach rechts, 1 Einheit nach oben.
+    Negative Zahlen bedeuten nach links bzw.\ nach unten.
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.4\linewidth}
+    \centering
+    \begin{tikzpicture}[scale=0.55]
+      \draw[very thin,gray!40] (0,0) grid (7,5);
+      \foreach \s in {(0,0),(4,0),(0,3),(2.5,1.5),(4.5,3)}
+        \draw[-Stealth,thick,blue] \s -- ++(2,1)
+          node[midway,above left,inner sep=1pt,font=\small] {$\vect{v}$};
+    \end{tikzpicture}
+
+    {\small Fünf Pfeile -- \emph{ein} Vektor $\vect{v} = \spvek{2}{1}$}
+  \end{minipage}
+\end{definition}
+
+\begin{aufgabe}[Gleiche Vektoren erkennen]{11cm}
+  Im Koordinatensystem sind zehn Pfeile eingezeichnet.
+  \begin{enumerate}[label=\alph*),nosep]
+    \item Markiere alle Pfeile, die zur \textbf{selben Pfeilklasse} gehören
+          (also denselben Vektor darstellen), jeweils mit der gleichen Farbe.
+    \item Gib für jede Pfeilklasse den Vektor in Koordinaten an.
+    \item Begründe, warum $\vect{d}$ und $\vect{f}$ \textbf{nicht} zum selben
+          Vektor gehören.
+  \end{enumerate}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.75]
+    \koordsys{12}{7}
+    \vekpfeil{(1,1)}{(3,2)}{a}{gA}{above left}   % (2|1)
+    \vekpfeil{(5,1)}{(7,2)}{b}{gA}{above left}   % (2|1)
+    \vekpfeil{(9,4)}{(11,5)}{c}{gA}{above left}  % (2|1)
+    \vekpfeil{(1,6)}{(1,4)}{d}{gB}{right}        % (0|-2)
+    \vekpfeil{(6,7)}{(6,5)}{e}{gB}{right}        % (0|-2)
+    \vekpfeil{(11,1)}{(11,3)}{f}{gX}{right}      % (0|2)  Gegenvektor zu d
+    \vekpfeil{(3,4)}{(4,6)}{g}{gC}{left}         % (1|2)
+    \vekpfeil{(8,1)}{(9,3)}{h}{gC}{left}         % (1|2)
+    \vekpfeil{(8,7)}{(10,6)}{i}{gX}{below left}  % (2|-1)
+    \vekpfeil{(5,4)}{(3,3)}{j}{gX}{below right}  % (-2|-1) Gegenvektor zu a
+  \end{tikzpicture}
+  \end{center}
+  \schreibplatz{3cm}
+  \loesung{
+    a) / b)
+    \begin{itemize}[nosep]
+      \item \textcolor{blue}{$\vect{a} = \vect{b} = \vect{c} = \spvek{2}{1}$}
+      \item \textcolor{red}{$\vect{d} = \vect{e} = \spvek{0}{-2}$}
+      \item \textcolor{green!50!black}{$\vect{g} = \vect{h} = \spvek{1}{2}$}
+      \item $\vect{f}$, $\vect{i}$ und $\vect{j}$ gehören zu keiner dieser
+            Klassen.
+    \end{itemize}
+    c) $\vect{d}$ und $\vect{f}$ sind gleich lang und parallel, aber
+    \textbf{nicht gleich orientiert}: Sie zeigen in entgegengesetzte
+    Richtungen ($\vect{f} = -\vect{d}$, Gegenvektor).
+  }
+\end{aufgabe}
+
+% ============================================================
+%  2. Verschiebung
+% ============================================================
+\Needspace{7cm}
+\begin{definition}{2: Ein Vektor ist eine Verschiebung}
+  \begin{minipage}[c]{0.56\linewidth}
+    Ein Vektor beschreibt eine \textbf{Änderung der Lage}.
+    Der Vektor $\vect{v}$ gibt an, wie weit und in welche Richtung
+    \emph{jeder} Punkt einer Figur verschoben wird.
+
+    \smallskip
+    Die Pfeile von jedem Punkt zu seinem Bildpunkt
+    ($A \to A'$, $B \to B'$, $C \to C'$) sind alle gleich -- sie bilden
+    genau die \textbf{Pfeilklasse} aus Definition~1.
+
+    \smallskip
+    Im Bild: $\vect{v} = \spvek{3}{1}$, also wird jeder Punkt
+    3 nach rechts und 1 nach oben verschoben.
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.4\linewidth}
+    \centering
+    \begin{tikzpicture}[scale=0.55]
+      \draw[very thin,gray!40] (0,0) grid (7,5);
+      \draw[thick,fill=gray!20] (0.5,0.5) node[below left]{$A$}
+        -- (2.5,0.5) node[below right]{$B$}
+        -- (1.5,2.5) node[above]{$C$} -- cycle;
+      \draw[thick,fill=orange!25] (3.5,1.5) node[above left,inner sep=1pt]{$A'$}
+        -- (5.5,1.5) node[below right]{$B'$}
+        -- (4.5,3.5) node[above]{$C'$} -- cycle;
+      \foreach \p in {(0.5,0.5),(2.5,0.5)}
+        \draw[-Stealth,thick,blue,dashed] \p -- ++(3,1);
+      \draw[-Stealth,thick,blue,dashed] (1.5,2.5) -- ++(3,1)
+        node[midway,above left,inner sep=1pt] {$\vect{v}$};
+    \end{tikzpicture}
+  \end{minipage}
+\end{definition}
+
+\begin{aufgabe}[Figuren verschieben]{10cm}
+  \begin{enumerate}[label=\alph*),nosep]
+    \item Verschiebe das Dreieck $PQR$ um den Vektor
+          $\vect{v} = \spvek{5}{1}$. Zeichne das Bilddreieck $P'Q'R'$ und
+          gib die Koordinaten von $P'$, $Q'$ und $R'$ an.
+    \item Zeichne die Verschiebungspfeile $P \to P'$, $Q \to Q'$ und
+          $R \to R'$ ein. Was fällt dir auf?
+    \item Ein Punkt $S(2 \mid 5)$ wird durch eine Verschiebung auf
+          $S'(7 \mid 3)$ abgebildet. Gib den Verschiebungsvektor an.
+          Auf welchen Punkt wird $T(0 \mid 4)$ bei derselben Verschiebung
+          abgebildet?
+  \end{enumerate}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.65]
+    \koordsys{10}{6}
+    \draw[thick,fill=gray!20] (1,1) node[below left]{$P$}
+      -- (4,2) node[above right,inner sep=1pt]{$Q$}
+      -- (2,4) node[above left]{$R$} -- cycle;
+    \ifloesungen
+      \draw[thick,fill=orange!25] (6,2) node[below right]{$P'$}
+        -- (9,3) node[below right]{$Q'$}
+        -- (7,5) node[above]{$R'$} -- cycle;
+      \foreach \p in {(1,1),(4,2),(2,4)}
+        \draw[-Stealth,thick,blue,dashed] \p -- ++(5,1);
+    \fi
+  \end{tikzpicture}
+  \end{center}
+  \schreibplatz{3cm}
+  \loesung{
+    a) $P'(6 \mid 2)$, $Q'(9 \mid 3)$, $R'(7 \mid 5)$\\
+    b) Alle Verschiebungspfeile sind gleich lang, parallel und gleich
+       orientiert -- sie sind Repräsentanten desselben Vektors
+       $\vect{v} = \spvek{5}{1}$.\\
+    c) $\vect{v} = \spvek{7-2}{3-5} = \spvek{5}{-2}$, \quad
+       $T'(0+5 \mid 4-2) = T'(5 \mid 2)$
+  }
+\end{aufgabe}
+
+% ============================================================
+%  Weitere Aufgaben
+% ============================================================
+\begin{aufgabe}[Zwei Verschiebungen nacheinander]{9cm}
+  Ein Punkt wird zuerst um $\vect{u} = \spvek{3}{1}$ und danach um
+  $\vect{v} = \spvek{-1}{2}$ verschoben.
+  \begin{enumerate}[label=\alph*),nosep]
+    \item Zeichne beide Verschiebungen hintereinander, beginnend im Ursprung.
+    \item Durch welche \emph{eine} Verschiebung $\vect{w}$ erreicht man
+          denselben Endpunkt? Zeichne $\vect{w}$ ein und gib ihn in
+          Koordinaten an.
+  \end{enumerate}
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.6]
+    \draw[very thin,gray!40] (-3,-2) grid (5,5);
+    \draw[-Stealth] (-3,0) -- (5,0) node[right] {$x$};
+    \draw[-Stealth] (0,-2) -- (0,5) node[above] {$y$};
+    \ifloesungen
+      \draw[-Stealth,thick,blue]  (0,0) -- (3,1)  node[midway,below] {$\vect{u}$};
+      \draw[-Stealth,thick,red]   (3,1) -- (2,3)  node[midway,right] {$\vect{v}$};
+      \draw[-Stealth,thick,green!50!black] (0,0) -- (2,3)
+        node[midway,left] {$\vect{w}$};
+    \fi
+  \end{tikzpicture}
+  \end{center}
+  \schreibplatz{2cm}
+  \loesung{
+    $\vect{w} = \vect{u} + \vect{v} = \spvek{3+(-1)}{1+2} = \spvek{2}{3}$.
+    Zwei Verschiebungen nacheinander ergeben wieder eine Verschiebung
+    (Vektoraddition).
+  }
+\end{aufgabe}
+
+\Needspace{5cm}
+\begin{merke}[Merke: Verbindungsvektor und Länge]
+  Der Vektor, der den Punkt $A$ auf den Punkt $B$ verschiebt, heißt
+  \textbf{Verbindungsvektor} $\vect{AB}$. Man berechnet ihn mit
+  „Endpunkt minus Anfangspunkt“:
+  \[
+    A(a_1 \mid a_2),\; B(b_1 \mid b_2): \qquad
+    \vect{AB} = \spvek{b_1 - a_1}{b_2 - a_2}
+  \]
+  Die \textbf{Länge} (der Betrag) eines Vektors folgt aus dem Satz des
+  Pythagoras:
+  \[
+    \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2}
+    \qquad\text{bzw.\ im Raum}\qquad
+    \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2 + v_3^2}.
+  \]
+\end{merke}
+
+\begin{aufgabe}[Verbindungsvektor und Länge]{6cm}
+  \begin{enumerate}[label=\alph*),nosep]
+    \item Berechne $\vect{AB}$ und $\betrag{\vect{AB}}$ für
+          $A(1 \mid 2)$ und $B(4 \mid 6)$.
+    \item Berechne $\vect{CD}$ und $\betrag{\vect{CD}}$ für
+          $C(1 \mid 2 \mid 0)$ und $D(4 \mid -1 \mid 3)$.
+    \item Wie hängen $\vect{AB}$ und $\vect{BA}$ zusammen? Begründe.
+  \end{enumerate}
+  \schreibplatz{4.5cm}
+  \loesung{
+    a) $\vect{AB} = \spvek{3}{4}$, \quad
+       $\betrag{\vect{AB}} = \sqrt{9 + 16} = 5$\\
+    b) $\vect{CD} = \spvekd{3}{-3}{3}$, \quad
+       $\betrag{\vect{CD}} = \sqrt{27} = 3\sqrt{3} \approx 5{,}20$\\
+    c) $\vect{BA} = -\vect{AB}$: gleich lang und parallel, aber
+       entgegengesetzt orientiert (Gegenvektor).
+  }
+\end{aufgabe}
+
+\begin{aufgabe}[Parallelogramm -- Transfer]{6cm}
+  Gegeben sind die Punkte $A(1 \mid 1)$, $B(5 \mid 2)$ und $C(6 \mid 5)$.
+  Bestimme den Punkt $D$ so, dass $ABCD$ ein Parallelogramm ist.\\
+  \textit{Tipp:} Welche Pfeile im Parallelogramm gehören zur selben
+  Pfeilklasse? Zeichne die Punkte zuerst in das Koordinatensystem.
+
+  \begin{center}
+  \begin{tikzpicture}[scale=0.7]
+    \koordsys{8}{6}
+    \foreach \p/\n/\pos in {(1,1)/A/below left,(5,2)/B/below right,(6,5)/C/above right}
+      \fill \p circle (2pt) node[\pos] {$\n$};
+    \ifloesungen
+      \draw[thick,orange!70!black] (1,1) -- (5,2) -- (6,5) -- (2,4) -- cycle;
+      \fill[orange!70!black] (2,4) circle (2pt) node[above left] {$D$};
+      \draw[-Stealth,very thick,blue] (1,1) -- (5,2);
+      \draw[-Stealth,very thick,blue] (2,4) -- (6,5);
+    \fi
+  \end{tikzpicture}
+  \end{center}
+  \schreibplatz{3cm}
+  \loesung{
+    Im Parallelogramm gilt $\vect{AB} = \vect{DC}$ (gleiche Pfeilklasse).
+    $\vect{AB} = \spvek{4}{1}$. $D$ entsteht, indem man $C$ um
+    $-\vect{AB}$ verschiebt: $D(6-4 \mid 5-1) = D(2 \mid 4)$.\\
+    Probe: $\vect{AD} = \spvek{1}{3} = \vect{BC}$ \checkmark
+  }
+\end{aufgabe}
+
+\end{document}
