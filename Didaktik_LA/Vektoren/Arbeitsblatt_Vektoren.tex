@@ -35,6 +35,7 @@
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc}
 \usepackage{chessfss}   % Schachfiguren-Symbole
+\usepackage{fontawesome5} % Glühbirnen-Symbol
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
@@ -61,10 +62,15 @@
 % Optionales 2. Argument: Platz, der mindestens frei sein muss,
 % sonst beginnt die Aufgabe auf einer neuen Seite.
 \newcounter{aufgabe}
+% Zusatz hinter der Überschrift der nächsten Aufgabe (z. B. \fuerdieschnellen)
+\let\aufgabenzusatz\relax
+\newcommand{\fuerdieschnellen}{\gdef\aufgabenzusatz{\quad
+  {\color{orange!80!black}\faLightbulb[regular]}~{\small\itshape (Für die Schnellen)}}}
 \newenvironment{aufgabe}[2][]{%
   \Needspace{#2}%
   \refstepcounter{aufgabe}%
   \par\medskip\noindent\textbf{Aufgabe \theaufgabe}%
+  \aufgabenzusatz\global\let\aufgabenzusatz\relax
   \if\relax\detokenize{#1}\relax\else\ \textit{(#1)}\fi\par\nopagebreak}%
   {\par}
 
@@ -81,7 +87,6 @@
 \fancyhf{}
 \lhead{\fach}
 \rhead{Name: \underline{\hspace{4cm}} \quad Datum: \underline{\hspace{2.5cm}}}
-\cfoot{Seite \thepage{} von \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.4pt}
 
 % --- Zeichenhilfen -------------------------------------------
@@ -235,7 +240,8 @@
 % ============================================================
 %  Aufgabe 3: Schachspiel
 % ============================================================
-\begin{aufgabe}[Schachspiel]{8cm}
+\fuerdieschnellen
+\begin{aufgabe}{8cm}
   \begin{minipage}[c]{0.45\linewidth}
     \centering
     \begin{tikzpicture}[scale=0.6]
@@ -258,6 +264,7 @@
     \end{tikzpicture}
   \end{minipage}\hfill
   \begin{minipage}[c]{0.5\linewidth}
+    \textbf{Schachspiel}\par\smallskip
     Ein Springer hat von der Position $d6$ acht Zugmöglichkeiten.
 
     Wie viele \textbf{Pfeilklassen} benötigt man, um alle möglichen Züge
