@@ -1,15 +1,12 @@
 % ============================================================
-%  Arbeitsblatt: Vektoren
+%  Arbeitsblatt: Pfeilklassen (Analytische Geometrie)
 %  Kompilieren:  latexmk Arbeitsblatt_Vektoren.tex
 %  Lösungen ein-/ausblenden: \loesungentrue / \loesungenfalse
 %
-%  Didaktischer Aufbau:
-%    Definition    Pfeilklasse     -> Aufgabe 1 (gleiche Vektoren markieren)
-%    Merke: Vektor als Verschiebung (Deutung, keine 2. Definition)
-%                                  -> Aufgabe 2 (Figur verschieben)
-%    Weitere Aufgaben              -> Aufgabe 3 (zwei Verschiebungen nacheinander)
-%    Merke: Länge eines Vektors    -> Aufgabe 4 (Längen berechnen)
-%                                  -> Aufgabe 5 (Parallelogramm, Transfer)
+%  Aufbau (nach handschriftlicher Überarbeitung):
+%    Aufgabe 1  Pfeilklassen im Kästchengitter erkennen und zeichnen
+%    Aufgabe 2  Pfeilklassen am Körper aus drei Würfeln
+%    Aufgabe 3  Schachspiel: Pfeilklassen der Springerzüge
 % ============================================================
 \documentclass[11pt,a4paper]{article}
 
@@ -23,6 +20,7 @@
 % --- Layout --------------------------------------------------
 \usepackage[a4paper,margin=2cm,top=2.5cm]{geometry}
 \usepackage{fancyhdr}
+\setlength{\headheight}{14pt}
 \usepackage{lastpage}
 \usepackage{enumitem}
 \usepackage{needspace}
@@ -36,6 +34,7 @@
 \usepackage{amsmath,amssymb}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc}
+\usepackage{chessfss}   % Schachfiguren-Symbole
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18}
 
@@ -76,13 +75,11 @@
   title=#1,fonttitle=\bfseries}
 
 % --- Kopf- & Fußzeile ----------------------------------------
-\newcommand{\fach}{Mathematik}
-\newcommand{\thema}{Vektoren}
-\newcommand{\klasse}{Klasse \underline{\hspace{1.5cm}}}
+\newcommand{\fach}{Analytische Geometrie}
 
 \pagestyle{fancy}
 \fancyhf{}
-\lhead{\fach{} -- \thema}
+\lhead{\fach}
 \rhead{Name: \underline{\hspace{4cm}} \quad Datum: \underline{\hspace{2.5cm}}}
 \cfoot{Seite \thepage{} von \pageref{LastPage}}
 \renewcommand{\headrulewidth}{0.4pt}
@@ -91,13 +88,8 @@
 % \vekpfeil{Start}{Ende}{Name}{Farbe}{Beschriftungsposition}
 \newcommand{\vekpfeil}[5]{%
   \draw[-Stealth,very thick,#4] #1 -- #2 node[midway,#5] {$\vect{#3}$};}
-% Koordinatensystem mit Gitter: \koordsys{xmax}{ymax}
-\newcommand{\koordsys}[2]{%
-  \draw[very thin,gray!40] (0,0) grid (#1,#2);
-  \draw[-Stealth] (0,0) -- (#1+0.5,0) node[right] {$x$};
-  \draw[-Stealth] (0,0) -- (0,#2+0.5) node[above] {$y$};
-  \foreach \x in {1,...,#1} \node[below,font=\scriptsize] at (\x,0) {\x};
-  \foreach \y in {1,...,#2} \node[left,font=\scriptsize]  at (0,\y) {\y};}
+% Kästchengitter ohne Achsen: \kaestchen{xmax}{ymax}
+\newcommand{\kaestchen}[2]{\draw[very thin,gray!50] (0,0) grid (#1,#2);}
 
 % ============================================================
 \begin{document}
@@ -112,56 +104,28 @@
 \fi
 
 \begin{center}
-  {\LARGE\bfseries Arbeitsblatt: Vektoren}\\[0.3em]
-  {\large \ifloesungen Lösungen\else \klasse\fi}
+  {\LARGE\bfseries Arbeitsblatt: Pfeilklassen}
+  \ifloesungen\\[0.3em]{\large Lösungen}\fi
 \end{center}
 
 % ============================================================
-%  1. Pfeilklasse
+%  Aufgabe 1: Pfeilklassen im Gitter
 % ============================================================
-\begin{definition}{Definition: Vektor}
-  \begin{minipage}[c]{0.56\linewidth}
-    Alle Pfeile, die
-    \begin{itemize}[nosep,leftmargin=1.2em]
-      \item gleich lang,
-      \item parallel und
-      \item gleich orientiert (zeigen in dieselbe Richtung)
-    \end{itemize}
-    sind, fassen wir zu einer \textbf{Klasse} zusammen. Diese Pfeilklasse
-    heißt \textbf{Vektor} $\vect{v}$. Jeder einzelne Pfeil ist ein
-    \textbf{Repräsentant} von $\vect{v}$.
-
-    \smallskip
-    \textbf{Schreibweise:} $\vect{v} = \spvek{2}{1}$ bedeutet:
-    2 Einheiten nach rechts, 1 Einheit nach oben.
-    Negative Zahlen bedeuten nach links bzw.\ nach unten.
-  \end{minipage}\hfill
-  \begin{minipage}[c]{0.4\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.55]
-      \draw[very thin,gray!40] (0,0) grid (7,5);
-      \foreach \s in {(0,0),(4,0),(0,3),(2.5,1.5),(4.5,3)}
-        \draw[-Stealth,thick,blue] \s -- ++(2,1)
-          node[midway,above left,inner sep=1pt,font=\small] {$\vect{v}$};
-    \end{tikzpicture}
-
-    {\small Fünf Pfeile -- \emph{ein} Vektor $\vect{v} = \spvek{2}{1}$}
-  \end{minipage}
-\end{definition}
-
-\begin{aufgabe}[Gleiche Vektoren erkennen]{11cm}
-  Im Koordinatensystem sind zehn Pfeile eingezeichnet.
+\begin{aufgabe}{11cm}
+  Im Kästchengitter sind zehn Pfeile eingezeichnet.
   \begin{enumerate}[label=\alph*),nosep]
-    \item Markiere alle Pfeile, die zur \textbf{selben Pfeilklasse} gehören
-          (also denselben Vektor darstellen), jeweils mit der gleichen Farbe.
-    \item Gib für jede Pfeilklasse den Vektor in Koordinaten an.
-    \item Begründe, warum $\vect{d}$ und $\vect{f}$ \textbf{nicht} zum selben
-          Vektor gehören.
+    \item Markiere alle Pfeile, die zur \textbf{selben Pfeilklasse} gehören,
+          jeweils mit der gleichen Farbe.
+    \item Wie viele verschiedene Pfeilklassen sind dargestellt?
+    \item Begründe, warum $\vect{d}$ und $\vect{f}$ \textbf{nicht} zur selben
+          Pfeilklasse gehören.
+    \item Zeichne drei unterschiedliche Pfeile ein, die zur selben
+          Pfeilklasse gehören.
   \end{enumerate}
 
   \begin{center}
   \begin{tikzpicture}[scale=0.75]
-    \koordsys{12}{7}
+    \kaestchen{22}{9}
     \vekpfeil{(1,1)}{(3,2)}{a}{gA}{above left}   % (2|1)
     \vekpfeil{(5,1)}{(7,2)}{b}{gA}{above left}   % (2|1)
     \vekpfeil{(9,4)}{(11,5)}{c}{gA}{above left}  % (2|1)
@@ -174,228 +138,136 @@
     \vekpfeil{(5,4)}{(3,3)}{j}{gX}{below right}  % (-2|-1) Gegenvektor zu a
   \end{tikzpicture}
   \end{center}
-  \schreibplatz{3cm}
+  \schreibplatz{2.5cm}
   \loesung{
-    a) / b)
+    a)
     \begin{itemize}[nosep]
-      \item \textcolor{blue}{$\vect{a} = \vect{b} = \vect{c} = \spvek{2}{1}$}
-      \item \textcolor{red}{$\vect{d} = \vect{e} = \spvek{0}{-2}$}
-      \item \textcolor{green!50!black}{$\vect{g} = \vect{h} = \spvek{1}{2}$}
-      \item $\vect{f}$, $\vect{i}$ und $\vect{j}$ gehören zu keiner dieser
-            Klassen.
+      \item \textcolor{blue}{$\vect{a}$, $\vect{b}$, $\vect{c}$}
+            (2 Kästchen nach rechts, 1 nach oben)
+      \item \textcolor{red}{$\vect{d}$, $\vect{e}$}
+            (2 Kästchen nach unten)
+      \item \textcolor{green!50!black}{$\vect{g}$, $\vect{h}$}
+            (1 Kästchen nach rechts, 2 nach oben)
+      \item $\vect{f}$, $\vect{i}$ und $\vect{j}$ bilden jeweils eine
+            eigene Pfeilklasse.
     \end{itemize}
+    b) Es sind \textbf{sechs} verschiedene Pfeilklassen dargestellt.\\
     c) $\vect{d}$ und $\vect{f}$ sind gleich lang und parallel, aber
     \textbf{nicht gleich orientiert}: Sie zeigen in entgegengesetzte
-    Richtungen ($\vect{f} = -\vect{d}$, Gegenvektor).
+    Richtungen.\\
+    d) Individuelle Lösung: drei gleich lange, parallele und gleich
+    orientierte Pfeile.
   }
 \end{aufgabe}
 
 % ============================================================
-%  Deutung: Vektor als Verschiebung
+%  Aufgabe 2: Körper aus drei Würfeln
 % ============================================================
-\Needspace{6cm}
-\begin{merke}[Merke: Vektor als Verschiebung]
-  \begin{minipage}[c]{0.56\linewidth}
-    Einen Vektor kann man auch als \textbf{Verschiebung} deuten:
-    Er gibt an, wie weit und in welche Richtung ein Punkt verschoben wird.
-
-    \smallskip
-    \textbf{Beispiel:} \quad $\vect{v} = \spvek{3}{1}$
-    \quad (3 nach rechts, 1 nach oben)
-    \[
-      P(1 \mid 1) \;\xrightarrow{\ \vect{v}\ }\; P'(4 \mid 2)
-    \]
-  \end{minipage}\hfill
-  \begin{minipage}[c]{0.4\linewidth}
-    \centering
-    \begin{tikzpicture}[scale=0.7]
-      \draw[very thin,gray!40] (0,0) grid (5,3);
-      % Treppe: 3 nach rechts, 1 nach oben
-      \draw[-Stealth,gray,dashed] (1,1) -- (4,1)
-        node[midway,below,font=\scriptsize] {3 nach rechts};
-      \draw[-Stealth,gray,dashed] (4,1) -- (4,2)
-        node[midway,right,font=\scriptsize] {1 nach oben};
-      % Verschiebungspfeil
-      \draw[-Stealth,very thick,blue] (1,1) -- (4,2)
-        node[midway,above left,inner sep=1pt] {$\vect{v}$};
-      \fill (1,1) circle (2.5pt) node[below left] {$P$};
-      \fill[orange!80!black] (4,2) circle (2.5pt) node[above] {$P'$};
-    \end{tikzpicture}
-  \end{minipage}
-\end{merke}
-
-\begin{aufgabe}[Punkte verschieben]{10cm}
-  \begin{enumerate}[label=\alph*),nosep]
-    \item Verschiebe den Punkt $P(1 \mid 2)$ um $\vect{v} = \spvek{4}{1}$.
-          Zeichne den Verschiebungspfeil und gib den Bildpunkt $P'$ an.
-    \item Verschiebe auch $Q(3 \mid 5)$ um denselben Vektor $\vect{v}$.
-          Vergleiche die beiden Pfeile. Was fällt dir auf?
-  \end{enumerate}
-
-  \begin{center}
-  \begin{tikzpicture}[scale=0.65]
-    \koordsys{10}{6}
-    \fill (1,2) circle (2.5pt) node[below left] {$P$};
-    \fill (3,5) circle (2.5pt) node[below left] {$Q$};
-    \ifloesungen
-      \draw[-Stealth,very thick,blue] (1,2) -- (5,3);
-      \draw[-Stealth,very thick,blue] (3,5) -- (7,6);
-      \fill[orange!80!black] (5,3) circle (2.5pt) node[below right] {$P'$};
-      \fill[orange!80!black] (7,6) circle (2.5pt) node[right] {$Q'$};
-    \fi
-  \end{tikzpicture}
-  \end{center}
-  \schreibplatz{2cm}
-  \loesung{
-    a) $P'(1+4 \mid 2+1) = P'(5 \mid 3)$\\
-    b) $Q'(7 \mid 6)$. Beide Pfeile sind gleich lang, parallel und gleich
-       orientiert -- sie gehören zur selben Pfeilklasse, also zum selben
-       Vektor $\vect{v}$.
-  }
-
-  \Needspace{7cm}
-  \begin{enumerate}[label=\alph*),nosep,start=3]
-    \item Der Punkt $S(2 \mid 5)$ wird auf $S'(7 \mid 3)$ verschoben.
-          Zeichne $S$, $S'$ und den Verschiebungspfeil ein und gib den
-          Verschiebungsvektor an.
-  \end{enumerate}
-
-  \begin{center}
-  \begin{tikzpicture}[scale=0.65]
-    \koordsys{10}{6}
-    \ifloesungen
-      \draw[-Stealth,gray,dashed] (2,5) -- (7,5)
-        node[midway,above,font=\scriptsize] {5 nach rechts};
-      \draw[-Stealth,gray,dashed] (7,5) -- (7,3)
-        node[midway,right,font=\scriptsize] {2 nach unten};
-      \draw[-Stealth,very thick,blue] (2,5) -- (7,3);
-      \fill (2,5) circle (2.5pt) node[left] {$S$};
-      \fill[orange!80!black] (7,3) circle (2.5pt) node[below] {$S'$};
-    \fi
-  \end{tikzpicture}
-  \end{center}
-  \schreibplatz{2cm}
-  \loesung{
-    c) $\vect{v} = \spvek{7-2}{3-5} = \spvek{5}{-2}$
-       (5 nach rechts, 2 nach unten)
-  }
-\end{aufgabe}
-
-% ============================================================
-%  Weitere Aufgaben
-% ============================================================
-\begin{aufgabe}[Zwei Verschiebungen nacheinander]{9cm}
-  Ein Punkt wird zuerst um $\vect{u} = \spvek{3}{1}$ und danach um
-  $\vect{v} = \spvek{-1}{2}$ verschoben.
-  \begin{enumerate}[label=\alph*),nosep]
-    \item Zeichne beide Verschiebungen hintereinander, beginnend im Ursprung.
-    \item Durch welche \emph{eine} Verschiebung $\vect{w}$ erreicht man
-          denselben Endpunkt? Zeichne $\vect{w}$ ein und gib ihn in
-          Koordinaten an.
-  \end{enumerate}
-
-  \begin{center}
-  \begin{tikzpicture}[scale=0.6]
-    \draw[very thin,gray!40] (-3,-2) grid (5,5);
-    \draw[-Stealth] (-3,0) -- (5,0) node[right] {$x$};
-    \draw[-Stealth] (0,-2) -- (0,5) node[above] {$y$};
-    \ifloesungen
-      \draw[-Stealth,thick,blue]  (0,0) -- (3,1)  node[midway,below] {$\vect{u}$};
-      \draw[-Stealth,thick,red]   (3,1) -- (2,3)  node[midway,right] {$\vect{v}$};
-      \draw[-Stealth,thick,green!50!black] (0,0) -- (2,3)
-        node[midway,left] {$\vect{w}$};
-    \fi
-  \end{tikzpicture}
-  \end{center}
-  \schreibplatz{2cm}
-  \loesung{
-    $\vect{w} = \vect{u} + \vect{v} = \spvek{3+(-1)}{1+2} = \spvek{2}{3}$.
-    Zwei Verschiebungen nacheinander ergeben wieder eine Verschiebung
-    (Vektoraddition).
-  }
-\end{aufgabe}
-
-\Needspace{6cm}
-\begin{merke}[Merke: Länge eines Vektors]
-  \begin{minipage}[c]{0.52\linewidth}
-    Die Länge (der \textbf{Betrag}) eines Vektors
-    $\vect{v} = \spvek{v_1}{v_2}$ berechnet man mit dem
-    Satz des Pythagoras:
-    \[
-      \betrag{\vect{v}} = \sqrt{v_1^2 + v_2^2}
-    \]
-    \textbf{Beispiel:} $\vect{v} = \spvek{4}{3}$
-    \[
-      \betrag{\vect{v}} = \sqrt{4^2 + 3^2} = \sqrt{25} = 5
-    \]
-  \end{minipage}\hfill
+\begin{aufgabe}{10cm}
   \begin{minipage}[c]{0.44\linewidth}
+    Der abgebildete Körper setzt sich aus drei gleich großen Würfeln
+    zusammen.
+    \begin{enumerate}[label=\alph*),nosep]
+      \item Welche der eingezeichneten Pfeile gehören zur selben
+            Pfeilklasse?
+      \item Begründe, weshalb die Pfeile $\overrightarrow{JH}$,
+            $\overrightarrow{KL}$ und $\overrightarrow{GL}$ nicht zur selben
+            Pfeilklasse gehören, obwohl sie parallel zueinander sind.
+    \end{enumerate}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.54\linewidth}
     \centering
-    \begin{tikzpicture}[scale=0.75]
-      \draw[very thin,gray!40] (0,0) grid (5,4);
-      % Katheten
-      \draw[thick,gray] (0.5,0.5) -- (4.5,0.5)
-        node[midway,below,font=\small,black] {$v_1 = 4$};
-      \draw[thick,gray] (4.5,0.5) -- (4.5,3.5)
-        node[midway,right,font=\small,black] {$v_2 = 3$};
-      % rechter Winkel
-      \draw[gray] (4.1,0.5) -- (4.1,0.9) -- (4.5,0.9);
-      % Vektor = Hypotenuse
-      \draw[-Stealth,very thick,blue] (0.5,0.5) -- (4.5,3.5)
-        node[midway,above left,inner sep=1pt]
-        {$\betrag{\vect{v}} = 5$};
+    \begin{tikzpicture}[scale=2.1,
+        x={(1cm,0cm)}, y={(0.5cm,0.48cm)}, z={(0cm,1cm)},
+        pt/.style={circle,fill=black,inner sep=1.1pt},
+        pf/.style={-Stealth,thick,blue!70!cyan}]
+      % Eckpunkte
+      \coordinate (A) at (0,0,0); \coordinate (B) at (1,0,0);
+      \coordinate (C) at (1,1,0); \coordinate (D) at (2,1,0);
+      \coordinate (E) at (2,2,0); \coordinate (N) at (0,2,0);
+      \coordinate (J) at (0,0,1); \coordinate (K) at (1,0,1);
+      \coordinate (L) at (1,1,1); \coordinate (M) at (2,1,1);
+      \coordinate (F) at (2,2,1); \coordinate (G) at (1,2,1);
+      \coordinate (H) at (0,2,1); \coordinate (I) at (0,1,1);
+      % Flächen
+      \fill[yellow!45!olive!25] (A) -- (B) -- (K) -- (J) -- cycle;
+      \fill[yellow!45!olive!35] (B) -- (C) -- (L) -- (K) -- cycle;
+      \fill[red!20] (C) -- (D) -- (M) -- (L) -- cycle;
+      \fill[red!30] (D) -- (E) -- (F) -- (M) -- cycle;
+      \fill[red!10] (L) -- (M) -- (F) -- (G) -- cycle;
+      \fill[yellow!45!olive!12] (J) -- (K) -- (L) -- (G) -- (H) -- cycle;
+      % verdeckte Kanten
+      \draw[dashed,gray] (A) -- (N) -- (E)  (N) -- (H)
+        (G) -- (1,2,0)  (I) -- (0,1,0) -- (C);
+      % sichtbare Kanten
+      \draw[thin] (A) -- (B) -- (C) -- (D) -- (E) -- (F) -- (G) -- (H)
+        -- (I) -- (J) -- cycle;
+      \draw[thin] (J) -- (K) -- (L) -- (M) -- (F)  (B) -- (K)  (C) -- (L)
+        (D) -- (M)  (I) -- (L) -- (G);
+      % Pfeile
+      \foreach \s/\e in {J/H, K/L, G/L, J/L, I/G, C/E, I/B, G/D,
+                         K/C, M/E, G/F, J/K, G/E, J/B}
+        \draw[pf] (\s) -- (\e);
+      % Punkte
+      \foreach \p/\pos in {A/below left, B/below, C/below right,
+          D/below right, E/right, J/left, K/below left, L/above left,
+          M/right, F/above right, G/above, H/above, I/above left}
+        \node[pt,label={[font=\small]\pos:$\p$}] at (\p) {};
     \end{tikzpicture}
   \end{minipage}
-\end{merke}
-
-\begin{aufgabe}[Länge eines Vektors]{6cm}
-  \begin{enumerate}[label=\alph*),nosep]
-    \item Berechne die Länge der Vektoren
-          \[
-            \vect{a} = \spvek{3}{4}, \qquad
-            \vect{b} = \spvek{-6}{8}, \qquad
-            \vect{c} = \spvek{2}{-1}, \qquad
-            \vect{d} = \spvek{0}{-2}.
-          \]
-    \item Warum haben $\vect{v}$ und $-\vect{v}$ immer dieselbe Länge?
-  \end{enumerate}
-  \schreibplatz{4.5cm}
+  \schreibplatz{4cm}
   \loesung{
-    a) $\betrag{\vect{a}} = \sqrt{9+16} = 5$, \quad
-       $\betrag{\vect{b}} = \sqrt{36+64} = 10$, \quad
-       $\betrag{\vect{c}} = \sqrt{4+1} = \sqrt{5} \approx 2{,}24$, \quad
-       $\betrag{\vect{d}} = \sqrt{0+4} = 2$\\
-    b) Beim Quadrieren fällt das Minuszeichen weg:
-       $(-v_1)^2 = v_1^2$. Anschaulich: Der Gegenvektor zeigt nur in die
-       entgegengesetzte Richtung, der Pfeil ist genauso lang.
+    a) Zur selben Pfeilklasse gehören jeweils:
+    $\{\overrightarrow{JL},\ \overrightarrow{IG},\ \overrightarrow{CE}\}$,\
+    $\{\overrightarrow{IB},\ \overrightarrow{GD}\}$,\
+    $\{\overrightarrow{KC},\ \overrightarrow{ME}\}$,\
+    $\{\overrightarrow{JB},\ \overrightarrow{GE}\}$,\
+    $\{\overrightarrow{JK},\ \overrightarrow{GF}\}$.\\
+    b) $\overrightarrow{JH}$ ist doppelt so lang wie $\overrightarrow{KL}$
+    (zwei Würfelkanten statt einer). $\overrightarrow{GL}$ ist zwar genauso
+    lang wie $\overrightarrow{KL}$, zeigt aber in die entgegengesetzte
+    Richtung (nicht gleich orientiert).
   }
 \end{aufgabe}
 
-\begin{aufgabe}[Parallelogramm -- Transfer]{6cm}
-  Gegeben sind die Punkte $A(1 \mid 1)$, $B(5 \mid 2)$ und $C(6 \mid 5)$.
-  Bestimme den Punkt $D$ so, dass $ABCD$ ein Parallelogramm ist.\\
-  \textit{Tipp:} Welche Pfeile im Parallelogramm gehören zur selben
-  Pfeilklasse? Zeichne die Punkte zuerst in das Koordinatensystem.
+% ============================================================
+%  Aufgabe 3: Schachspiel
+% ============================================================
+\begin{aufgabe}[Schachspiel]{8cm}
+  \begin{minipage}[c]{0.45\linewidth}
+    \centering
+    \begin{tikzpicture}[scale=0.6]
+      \foreach \x in {1,...,8} \foreach \y in {1,...,8} {
+        \pgfmathparse{mod(\x+\y,2)==0 ? "brown!75!black!85" : "yellow!8"}
+        \fill[\pgfmathresult] (\x-1,\y-1) rectangle (\x,\y);}
+      \draw (0,0) rectangle (8,8);
+      \foreach \c [count=\i] in {a,...,h} {
+        \node[font=\scriptsize,text height=1.2ex] at (\i-0.5,-0.35) {\c};
+        \node[font=\scriptsize,text height=1.2ex] at (\i-0.5,8.35) {\c};}
+      \foreach \i in {1,...,8} {
+        \node[font=\scriptsize] at (-0.35,\i-0.5) {\i};
+        \node[font=\scriptsize] at (8.35,\i-0.5) {\i};}
+      \node[inner sep=0pt,font=\fontsize{17}{17}\selectfont] at (3.5,5.5)
+        {\WhiteKnightOnWhite};
+      \ifloesungen
+        \foreach \dx/\dy in {1/2,2/1,2/-1,1/-2,-1/-2,-2/-1,-2/1,-1/2}
+          \draw[-Stealth,very thick,blue] (3.5,5.5) -- ++(\dx,\dy);
+      \fi
+    \end{tikzpicture}
+  \end{minipage}\hfill
+  \begin{minipage}[c]{0.5\linewidth}
+    Ein Springer hat von der Position d6 acht Zugmöglichkeiten.
 
-  \begin{center}
-  \begin{tikzpicture}[scale=0.7]
-    \koordsys{8}{6}
-    \foreach \p/\n/\pos in {(1,1)/A/below left,(5,2)/B/below right,(6,5)/C/above right}
-      \fill \p circle (2pt) node[\pos] {$\n$};
-    \ifloesungen
-      \draw[thick,orange!70!black] (1,1) -- (5,2) -- (6,5) -- (2,4) -- cycle;
-      \fill[orange!70!black] (2,4) circle (2pt) node[above left] {$D$};
-      \draw[-Stealth,very thick,blue] (1,1) -- (5,2);
-      \draw[-Stealth,very thick,blue] (2,4) -- (6,5);
-    \fi
-  \end{tikzpicture}
-  \end{center}
+    Wie viele Pfeilklassen benötigt man, um alle möglichen Züge
+    anzugeben, wenn keine andere Figur stört?
+  \end{minipage}
   \schreibplatz{3cm}
   \loesung{
-    Im Parallelogramm gilt $\vect{AB} = \vect{DC}$ (gleiche Pfeilklasse).
-    $\vect{AB} = \spvek{4}{1}$. $D$ entsteht, indem man $C$ um
-    $-\vect{AB}$ verschiebt: $D(6-4 \mid 5-1) = D(2 \mid 4)$.\\
-    Probe: $\vect{AD} = \spvek{1}{3} = \vect{BC}$ \checkmark
+    Man benötigt \textbf{acht} Pfeilklassen: Jeder der acht Züge
+    (z.\,B.\ 2 Felder nach rechts und 1 nach oben, 1 nach rechts und 2 nach
+    oben, \ldots) hat eine andere Richtung bzw.\ Orientierung. Mit diesen
+    acht Pfeilklassen lassen sich die Springerzüge von \emph{jedem} Feld aus
+    beschreiben -- egal, wo der Springer steht.
   }
 \end{aufgabe}
 
